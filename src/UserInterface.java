@@ -2,7 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
 import java.util.Date;
+import java.util.Random;
 
 public class UserInterface extends JFrame implements ActionListener {
 
@@ -13,7 +15,7 @@ public class UserInterface extends JFrame implements ActionListener {
     // with the menu displaying the initial random hue each time.
     // 4th item: program exits
     private JMenuBar menuBar;
-    private JMenu fileMenu;
+    private JMenu optionsMenu;
     private JMenuItem displayDate;
     private JMenuItem dateToText;
     private JMenuItem colorChange;
@@ -22,15 +24,16 @@ public class UserInterface extends JFrame implements ActionListener {
 
     // Constructor
     UserInterface() {
-        // Builds frame parameters
+        // Builds frame
         this.setTitle("User Interface 1");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(500, 500);
         this.setLayout(new FlowLayout());
+        this.getContentPane().setBackground(Color.GREEN);
 
         menuBar = new JMenuBar(); // Builds new menu bar
 
-        fileMenu = new JMenu("File");  // Builds new "File" menu bar option
+        optionsMenu = new JMenu("Options");  // Builds new "File" menu bar option
 
         // Creates new items to use in the menu option, in this case for the "File" option
         displayDate = new JMenuItem("Display Date and Time");
@@ -50,11 +53,11 @@ public class UserInterface extends JFrame implements ActionListener {
         exitItem.addActionListener(this);
 
         // Adds the components to the file menu, menu bar, and frame
-        fileMenu.add(displayDate);
-        fileMenu.add(dateToText);
-        fileMenu.add(colorChange);
-        fileMenu.add(exitItem);
-        menuBar.add(fileMenu);
+        optionsMenu.add(displayDate);
+        optionsMenu.add(dateToText);
+        optionsMenu.add(colorChange);
+        optionsMenu.add(exitItem);
+        menuBar.add(optionsMenu);
         this.setJMenuBar(menuBar);
         this.add(dateTimeField);
         this.setVisible(true);
@@ -63,14 +66,24 @@ public class UserInterface extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == displayDate) {
-            String currentDateAndTime = new Date().toString(); // Date class with toString
+        if (e.getSource() == displayDate) {  // identify what triggered the event
+            String currentDateAndTime = new Date().toString(); // Date class converted to String (toString)
             dateTimeField.setText(currentDateAndTime);
-        }
-        if (e.getSource() == dateToText) {
 
         }
+        if (e.getSource() == dateToText) {
+            try (FileWriter writer = new FileWriter("log.txt")) {
+                writer.write(dateTimeField.getText());
+                JOptionPane.showMessageDialog(this,"Save successful!");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,"Save unsuccessful: " + ex.getMessage());
+            }
+        }
         if (e.getSource() == colorChange) {
+            Random randomGreen = new Random();  // Create a Random object to generate random number
+            int green = randomGreen.nextInt(256);  // Generate a random int between 0-255
+            this.getContentPane().setBackground(new Color(0,green,0));  // Use the random green
+            JOptionPane.showMessageDialog(this,"Background color changed to: " + green);
 
         }
         if (e.getSource() == exitItem) {
